@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_DB: trip_dataset
+      POSTGRES_USER: trip_user
+      POSTGRES_PASSWORD: trip_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./dbschema.sql:/docker-entrypoint-initdb.d/dbschema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trip_user -d trip_dataset"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: postgresql://trip_user:trip_password@db:5432/trip_dataset
+
+volumes:
+  postgres_data:
