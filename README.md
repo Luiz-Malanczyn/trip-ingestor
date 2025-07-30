@@ -120,3 +120,41 @@ psql postgresql://trip_user:trip_password@localhost:5432/trip_dataset
 | BATCH_SIZE | Number of records per batch | 10000 |
 | REGION | Region name for analytics | Prague |
 | SQL_FILE | Path to SQL query file | src/questions.sql |
+
+
+## Cloud Architecture Sketch
+
+This solution can be deployed to cloud providers using the following architecture:
+
+### AWS Components
+- **Storage**: S3 for data lake
+- **Processing**: AWS Glue with Spark
+- **Streaming**: MSK (Managed Kafka)
+- **Orchestration**: Step Functions
+- **Database**: RDS PostgreSQL with PostGIS
+- **Monitoring**: CloudWatch
+
+### Key Implementation Points
+1. **Batch Processing**
+   - AWS Glue Crawlers scan S3 data
+   - Glue ETL jobs using Spark
+   - Dynamic Frame transformations
+   - JDBC bulk loading to PostgreSQL
+
+2. **Real-time Processing**
+   - Kafka topics for trip events
+   - Kafka Connect for PostgreSQL sync
+   - Glue Streaming ETL jobs
+   - Near real-time analytics
+
+3. **Orchestration**
+   - Step Functions manage workflow
+   - Error handling and retries
+   - Conditional processing paths
+   - Job monitoring and alerts
+
+4. **Monitoring & Scaling**
+   - Glue job metrics
+   - MSK performance monitoring
+   - Auto-scaling policies
+   - CloudWatch dashboards

@@ -23,6 +23,8 @@ def ingest_csv(csv_path: str, db_url: str, batch_size: int = 10000):
     3. Generates unique trip IDs
     4. Bulk inserts into PostgreSQL
     5. Provides progress logging
+
+    We will log all steps and progress to help with debugging and monitoring
     """
     logger.info(f"Starting ingestion from {csv_path}")
     
@@ -78,6 +80,10 @@ def _bulk_insert(cur, data):
 
 
 def generate_trip_hash(ox, oy, dx, dy, timestamp_str):
+    """
+    Generate a unique hash for the trip based on coordinates and timestamp,
+    to group trips with similar origin, destination and time
+    """
     ox_r = round(ox, 3)
     oy_r = round(oy, 3)
     dx_r = round(dx, 3)
